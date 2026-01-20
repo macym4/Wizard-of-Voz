@@ -1,17 +1,16 @@
 #include <WiFi.h>
 #include <esp_now.h>
 
-// ===== HUB MAC =====
-uint8_t HUB_MAC[] = { 0x6C, 0xC8, 0x40, 0x8C, 0xD9, 0xD0 }; // Use the MAC address retrieval code to get the MAC address and replace this line with the MAC address of the arduino for the HUB
+// ===== HUB MAC ===== //CHANGE THIS MAC ADDRESS TO MATCH THE ADDRESS FROM THE HUB ARDUINO
+uint8_t HUB_MAC[] = { 0x6C, 0xC8, 0x40, 0x8C, 0xD9, 0xD0 };
 
-// ===== BUTTON PINS ===== // CHANGE these pins to match the wiring in the devices
+// ===== BUTTON PINS ===== //CHANGE THESE PIN NUMBERS TO MATCH THE WIRING IN YOUR DEVICE
 #define PIN_UP     4
 #define PIN_DOWN   5
 #define PIN_LEFT   6
 #define PIN_RIGHT  7
 
-
-// ===== KEY IDS ===== // DO NOT CHANGE ANY CODE BELOW THIS LINE!
+// ===== KEY IDS =====
 #define KEY_UP     1
 #define KEY_DOWN   2
 #define KEY_LEFT   3
@@ -44,19 +43,19 @@ const int NUM_BUTTONS = sizeof(buttons) / sizeof(buttons[0]);
 
 void setup() {
   Serial.begin(115200);
+  delay(300);
 
   for (int i = 0; i < NUM_BUTTONS; i++) {
     pinMode(buttons[i].pin, INPUT_PULLUP);
   }
 
+  // ---- WiFi / ESP-NOW INIT ----
   WiFi.mode(WIFI_STA);
-  WiFi.disconnect();
-
-  Serial.print("SPOKE MAC: ");
+  WiFi.disconnect(true, true);
+  delay(100);
   Serial.println(WiFi.macAddress());
 
   if (esp_now_init() != ESP_OK) {
-    Serial.println("❌ ESP-NOW init failed");
     return;
   }
 
@@ -65,12 +64,13 @@ void setup() {
   peer.channel = 0;
   peer.encrypt = false;
 
+  // ESP32 core 3.x is stricter about duplicate peers
+  esp_now_del_peer(HUB_MAC);
+  delay(10);
+
   if (esp_now_add_peer(&peer) != ESP_OK) {
-    Serial.println("❌ Failed to add peer");
     return;
   }
-
-  Serial.println("✅ SPOKE READY (USB-powered)");
 }
 
 void loop() {
@@ -84,7 +84,12 @@ void loop() {
         now - buttons[i].lastTime >= DEBOUNCE_MS) {
 
       pkt.key = buttons[i].key;
-      esp_now_send(HUB_MAC, (uint8_t*)&pkt, sizeof(pkt));
+
+      esp_now_send(
+        HUB_MAC,
+        (uint8_t*)&pkt,
+        sizeof(pkt)
+      );
 
       Serial.print("➡️ Sent key: ");
       Serial.println(buttons[i].key);
