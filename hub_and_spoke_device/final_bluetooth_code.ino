@@ -5,10 +5,10 @@
 BleKeyboard bleKeyboard("WOV Keyboard bluetooth", "ESP32", 100);
 
 // ===== HUB BUTTON =====
-#define PIN_ENTER  4
-#define DEBOUNCE_MS 40
+#define PIN_ENTER    4 // CHANGE the enter button pin number
+#define DEBOUNCE_MS  40
 
-// ===== KEY IDS =====
+// ===== KEY IDS ===== // DO NOT CHANGE any code below this point
 #define KEY_UP     1
 #define KEY_DOWN   2
 #define KEY_LEFT   3
@@ -23,10 +23,18 @@ bool lastEnter = HIGH;
 unsigned long lastEnterTime = 0;
 bool enterArmed = true;
 
-// ===== ESP-NOW RECEIVE =====
+//=========== ESP-NOW RECEIVE CALLBACK (2.x + 3.x COMPATIBLE)=======
+#if ESP_IDF_VERSION_MAJOR >= 5
+// ----- ESP32 core 3.x -----
 void onReceive(const esp_now_recv_info_t *info,
                const uint8_t *data,
                int len) {
+#else
+// ----- ESP32 core 2.x -----
+void onReceive(const uint8_t *mac,
+               const uint8_t *data,
+               int len) {
+#endif
 
   if (len != sizeof(Packet)) return;
   if (!bleKeyboard.isConnected()) return;
@@ -54,11 +62,13 @@ void setup() {
   Serial.print("HUB MAC: ");
   Serial.println(WiFi.macAddress());
 
-  esp_now_init();
+  if (esp_now_init() != ESP_OK) {
+    return;
+  }
+
   esp_now_register_recv_cb(onReceive);
 
   bleKeyboard.begin();
-  Serial.println("✅ HUB READY — pair BLE keyboard");
 }
 
 void loop() {
@@ -71,7 +81,6 @@ void loop() {
       now - lastEnterTime >= DEBOUNCE_MS) {
 
     if (bleKeyboard.isConnected()) {
-      Serial.println("⏎ ENTER");
       bleKeyboard.write(' ');
     }
 
