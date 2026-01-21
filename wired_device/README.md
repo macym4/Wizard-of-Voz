@@ -16,7 +16,7 @@ Este subdirectorio contiene el firmware para la versión con cable del dispositi
 
 ## Archivos incluidos *(Included Files)*
 - `final_wired_code.ino` — firmware final para la versión con cable.  
-  *Final firmware for the **wired** version.*
+  *Final firmware for the wired version.*
 
 ---
 
