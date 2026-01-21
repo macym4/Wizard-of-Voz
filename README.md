@@ -124,4 +124,13 @@ Este repositorio contiene el firmware para dos dispositivos de CAA (Comunicació
 ---
 
 ## Estructura del repositorio *(GitHub Layout)*
-NEED TO FINISH
+wizard-of-voz/
+├── hub_and_spoke_device/
+│ └── MAC_code_retrieval.ino
+│ └── final_hub_code.ino
+│ └── final_spoke_code.ino
+│ └── README.md
+├── wired_device/
+│ └── final_wired_code.ino
+| └── README.md
+└── README.md
