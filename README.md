@@ -6,7 +6,7 @@ Este repositorio contiene el firmware para dos dispositivos de CAA (Comunicació
 
 ---
 
-## What This Does *(Qué hace este proyecto)*
+## Qué hace este proyecto *(What This Does)*
 - **Spoke(s):** módulos pequeños con botones que detectan pulsaciones y envían señales al hub mediante códigos MAC.  
   *Small button modules that detect button presses and send signals to the hub using MAC codes.*
 - **Hub:** recibe mensajes de los spokes y envía eventos de teclado al teléfono usando BLE HID.  
@@ -14,7 +14,7 @@ Este repositorio contiene el firmware para dos dispositivos de CAA (Comunicació
 
 ---
 
-## Features *(Características)*
+## Características *(Features)*
 - Controles de navegación: arriba/abajo/izquierda/derecha/enter.  
   *Up/Down/Left/Right/Enter navigation controls.*
 - Comunicación inalámbrica entre spokes y hub (solo en la configuración hub-and-spoke).  
@@ -26,7 +26,7 @@ Este repositorio contiene el firmware para dos dispositivos de CAA (Comunicació
 
 ---
 
-## Hardware Needed *(Materiales necesarios)*
+## Materiales necesarios *(Hardware Needed)*
 
 ### Wired Configuration *(Configuración con cable)*
 - Placa ESP32 *(pero NO ESP32-S2 ni ESP32-S3)*  
@@ -60,14 +60,14 @@ Este repositorio contiene el firmware para dos dispositivos de CAA (Comunicació
    *Download and install **Arduino IDE**.*
 2. Abre Arduino IDE y agrega soporte para placas ESP32:  
    *Open Arduino IDE and add ESP32 board support:*
-   - Ve a **File → Preferences**  
+   - Ve a **Archivo → Preferencias**  
      *Go to **File → Preferences***
-   - En **Additional Boards Manager URLs**, pega:  
+   - En **URLs adicionales del Gestor de placas**, pega:  
      *Under **Additional Boards Manager URLs**, paste:*
      - `https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json`
    - Haz clic en **OK**  
      *Click **OK***
-   - Luego ve a **Tools → Board → Boards Manager**, busca **ESP32**, e instala **Espressif Systems ESP32**  
+   - Luego ve a **Herramientas → Placa → Gestor de placas**, busca **ESP32**, e instala **Espressif Systems ESP32**  
      *Then go to **Tools → Board → Boards Manager**, search **ESP32**, and install **Espressif Systems ESP32***
 3. Instala las librerías necesarias:  
    *Install the required libraries:*
@@ -75,19 +75,19 @@ Este repositorio contiene el firmware para dos dispositivos de CAA (Comunicació
      *For BLE HID mode, install `BleKeyboard.h`:*
      - Ve a `https://github.com/T-vK/ESP32-BLE-Keyboard`  
        *Go to `https://github.com/T-vK/ESP32-BLE-Keyboard`*
-     - Haz clic en **Code → Download ZIP**  
+     - Haz clic en **Código → Descargar ZIP**
        *Click **Code → Download ZIP***
-     - En Arduino IDE: **Sketch → Include Library → Add .ZIP Library**  
+     - En Arduino IDE: **Programa → Incluir biblioteca → Añadir biblioteca .ZIP**
        *In Arduino IDE: **Sketch → Include Library → Add .ZIP Library***
-     - Selecciona el ZIP y confirma que diga **“Library installed”**  
+     - Selecciona el ZIP y confirma que diga **“Biblioteca instalada”**  
        *Select the ZIP and confirm it says **“Library installed”***
 4. Reinicia Arduino IDE (ciérralo y vuelve a abrirlo) para que todo cargue correctamente.  
    *Restart Arduino IDE (close and re-open) so everything loads correctly.*
 5. Selecciona tu placa y puerto:  
    *Select your board and port:*
-   - Ve a **Tools → Board** y elige la placa ESP32 correcta  
+   - Ve a **Herramientas → Placa** y elige la placa ESP32 correcta  
      *Go to **Tools → Board** and choose the correct ESP32 board*
-   - Ve a **Tools → Port** y selecciona el COM correcto  
+   - Ve a **Herramientas → Puerto** y selecciona el COM correcto  
      *Go to **Tools → Port** and select the correct COM port*
 6. Sube el código:  
    *Upload the code:*
@@ -95,16 +95,33 @@ Este repositorio contiene el firmware para dos dispositivos de CAA (Comunicació
      *Upload the **Spoke** code to the spoke board(s)*
    - Sube el código de **Hub** al hub  
      *Upload the **Hub** code to the hub board*
-7. Prueba el sistema presionando botones y revisando la salida en el **Serial Monitor**.  
+7. Prueba el sistema presionando botones y revisando la salida en el **Monitor serie**.  
    *Test the system by pressing buttons and checking output in the **Serial Monitor**.*
 
-> **Nota:** Algunas versiones del paquete ESP32 cambian el tipo de callback de ESP-NOW. Si tienes errores de compilación, revisa la sección **Troubleshooting**.  
+> **Nota:** Algunas versiones del paquete ESP32 cambian el tipo de callback de ESP-NOW. Si tienes errores de compilación, revisa la sección **Solución de problemas**.  
 > *Note: Some ESP32 board package versions change the ESP-NOW receive callback type. If you get compilation errors, check the **Troubleshooting** section below.*
 
 ---
 
-## GitHub Layout *(Estructura del repositorio)*
+## Solución de problemas *(Troubleshooting)*
 
-Coloca tus archivos en estas carpetas según la versión del dispositivo.  
-*Place your files in these folders depending on the device version.*
+### No aparece el teclado BLE *(BLE keyboard not showing up)*
+- Confirma que `BleKeyboard.begin()` se llame en `setup()`.  
+  *Confirm `BleKeyboard.begin()` is called in `setup()`.*
+- Verifica que el Bluetooth del teléfono esté encendido.  
+  *Check that your phone Bluetooth is on.*
+- Intenta borrar el dispositivo de Bluetooth y volver a emparejarlo.  
+  *Try removing the device from Bluetooth settings and re-pairing.*
 
+### Botones se activan solos *(Buttons triggering randomly)*
+- Usa `INPUT_PULLUP`.  
+  *Use `INPUT_PULLUP`.*
+- Asegúrate de que el botón vaya a **GND**.  
+  *Make sure the button goes to **GND**.*
+- Agrega “debouncing” o aumenta el debounce si es necesario.  
+  *Add debouncing (or increase the debounce) if needed.*
+
+---
+
+## Estructura del repositorio *(GitHub Layout)*
+NEED TO FINISH
