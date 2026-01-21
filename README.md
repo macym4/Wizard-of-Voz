@@ -56,7 +56,7 @@ Este repositorio contiene el firmware para dos dispositivos de CAA (Comunicació
 
 ## Arduino IDE Setup (ESP32 + BLE Keyboard) *(Configuración de Arduino IDE)*
 
-1. Descarga e instala **Arduino IDE**.  
+1. Descarga e instala **Arduino IDE**. (https://www.arduino.cc/en/software/)
    *Download and install **Arduino IDE**.*
 2. Abre Arduino IDE y agrega soporte para placas ESP32:  
    *Open Arduino IDE and add ESP32 board support:*
