@@ -1,13 +1,13 @@
 # Hub y Radios *(Hub-and-Spoke Device)*
 
-Este subdirectorio contiene el firmware para la versión **hub y radios** del dispositivo de CAA (Comunicación Aumentativa y Alternativa), que funciona como un teclado HID de Bluetooth de Bajo Consumo (BLE). En esta configuración, los controles se dividen en módulos: un **hub** recibe las pulsaciones de los **spokes** y envía comandos de navegación (arriba/abajo/izquierda/derecha/clic) al teléfono como si fuera un teclado.
+Este subdirectorio contiene el firmware para la versión hub y radios del dispositivo de CAA (Comunicación Aumentativa y Alternativa), que funciona como un teclado HID de Bluetooth de Bajo Consumo (BLE). En esta configuración, los controles se dividen en módulos: un hub recibe las pulsaciones de los **spokes** y envía comandos de navegación (arriba/abajo/izquierda/derecha/clic) al teléfono como si fuera un teclado.
 
-*This subdirectory contains the firmware for the **hub-and-spoke** version of the AAC (Augmentative and Alternative Communication) device, which functions as a Bluetooth Low Energy (BLE) HID keyboard. In this configuration, the controls are split into modules: a **hub** receives button presses from **spokes** and sends navigation commands (up/down/left/right/click) to the phone like a keyboard.*
+*This subdirectory contains the firmware for the hub-and-spoke version of the AAC (Augmentative and Alternative Communication) device, which functions as a Bluetooth Low Energy (BLE) HID keyboard. In this configuration, the controls are split into modules: a hub receives button presses from spokes and sends navigation commands (up/down/left/right/click) to the phone like a keyboard.*
 
 ---
 
 ## Qué hace este subproyecto *(What This Subproject Does)*
-- **Spoke:** detecta pulsaciones de botones y envía señales al hub mediante códigos MAC.  
+- **Radios:** detecta pulsaciones de botones y envía señales al hub mediante códigos MAC.  
   *Spoke: detects button presses and sends signals to the hub using MAC codes.*
 - **Hub:** recibe mensajes de los spokes y envía eventos de teclado al teléfono usando BLE HID.  
   *Hub: receives spoke messages and outputs keyboard events to the phone via BLE HID.*
