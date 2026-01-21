@@ -91,7 +91,7 @@ void loop() {
         sizeof(pkt)
       );
 
-      Serial.print("➡️ Sent key: ");
+      Serial.print("Sent key: ");
       Serial.println(buttons[i].key);
 
       buttons[i].lastTime = now;
