@@ -2,13 +2,19 @@
 #include <esp_now.h>
 #include <BleKeyboard.h>
 
+// "WOV Keyboard bluetooth" is the name of your device. To change the name, add the new name between the quotation marks (ex: "New Name")
+// "WOV Keyboard bluetooth" es el nombre de su dispositivo. Para cambiarlo, añada el nuevo nombre entre comillas (ej: "Nuevo nombre")
 BleKeyboard bleKeyboard("WOV Keyboard bluetooth", "ESP32", 100);
 
 // ===== HUB BUTTON =====
-#define PIN_ENTER    4 // CHANGE the enter button pin number
+//CHANGE THIS PIN NUMBER TO MATCH THE WIRING IN YOUR DEVICE
+//CAMBIE ESTE NÚMERO DE PIN PARA QUE COINCIDAN CON EL CABLEADO DE SU DISPOSITIVO
+#define PIN_ENTER    4
 #define DEBOUNCE_MS  40
 
-// ===== KEY IDS ===== // DO NOT CHANGE any code below this point
+//DO NOT CHANGE any code below these lines
+// NO CAMBIE ningún código debajo de estas líneas
+// ===== KEY IDS =====
 #define KEY_UP     1
 #define KEY_DOWN   2
 #define KEY_LEFT   3
@@ -23,19 +29,16 @@ bool lastEnter = HIGH;
 unsigned long lastEnterTime = 0;
 bool enterArmed = true;
 
-//=========== ESP-NOW RECEIVE CALLBACK (2.x + 3.x COMPATIBLE)=======
+//=========== ESP-NOW RECEIVE CALLBACK ===========
 #if ESP_IDF_VERSION_MAJOR >= 5
-// ----- ESP32 core 3.x -----
 void onReceive(const esp_now_recv_info_t *info,
                const uint8_t *data,
                int len) {
 #else
-// ----- ESP32 core 2.x -----
 void onReceive(const uint8_t *mac,
                const uint8_t *data,
                int len) {
 #endif
-
   if (len != sizeof(Packet)) return;
   if (!bleKeyboard.isConnected()) return;
 
@@ -63,34 +66,46 @@ void setup() {
   Serial.println(WiFi.macAddress());
 
   if (esp_now_init() != ESP_OK) {
+    Serial.println("ESP-NOW init failed");
     return;
   }
+
+  esp_now_peer_info_t peer = {};
+  memset(peer.peer_addr, 0xFF, 6);  // accept any sender
+  peer.channel = 0;
+  peer.encrypt = false;
+
+  esp_now_add_peer(&peer);
 
   esp_now_register_recv_cb(onReceive);
 
   bleKeyboard.begin();
+  Serial.println("HUB READY");
 }
 
 void loop() {
-  unsigned long now = millis();
-  bool curEnter = digitalRead(PIN_ENTER);
+  static bool buttonPressed = false;
+  static unsigned long lastChange = 0;
 
-  if (enterArmed &&
-      lastEnter == HIGH &&
-      curEnter == LOW &&
-      now - lastEnterTime >= DEBOUNCE_MS) {
+  bool curEnter = digitalRead(PIN_ENTER);
+  unsigned long now = millis();
+
+  // debounce
+  if (now - lastChange < DEBOUNCE_MS) return;
+
+  // detect press
+  if (!buttonPressed && curEnter == LOW) {
+    lastChange = now;
+    buttonPressed = true;
 
     if (bleKeyboard.isConnected()) {
-      bleKeyboard.write(' ');
+      bleKeyboard.write(' '); 
     }
-
-    enterArmed = false;
-    lastEnterTime = now;
   }
 
-  if (curEnter == HIGH) {
-    enterArmed = true;
+  // detect release
+  if (buttonPressed && curEnter == HIGH) {
+    lastChange = now;
+    buttonPressed = false;
   }
-
-  lastEnter = curEnter;
 }
