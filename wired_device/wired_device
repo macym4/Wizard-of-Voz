@@ -1,0 +1,79 @@
+#include <BleKeyboard.h>
+
+// "WOV Keyboard" is the name of your device. To change the name, add the new name between the quotation marks (ex: "New Name")
+// "WOV Keyboard" es el nombre de su dispositivo. Para cambiarlo, añada el nuevo nombre entre comillas (ej: "Nuevo nombre")
+BleKeyboard bleKeyboard(
+  "WOV Keyboard",
+  "ESP32",
+  100
+);
+
+// CHANGE THIS PIN NUMBER TO MATCH THE WIRING IN YOUR DEVICE. We recommend pins 4,5,18,19,21.
+// CAMBIE ESTE NÚMERO DE PIN PARA QUE COINCIDAN CON EL CABLEADO DE SU DISPOSITIVO. Recomendamos los pines 4,5,18,19,21. 
+// ==== Button pins ==== Los pines ====
+#define PIN_RIGHT   19
+#define PIN_LEFT  21
+#define PIN_DOWN   18
+#define PIN_UP     5
+#define PIN_ENTER  4
+
+
+//DO NOT CHANGE any code below these lines
+// NO CAMBIE ningún código debajo de estas líneas
+const unsigned long PRESS_THRESHOLD_MS = 40;
+struct ButtonState {
+  uint8_t pin;
+  uint8_t key;
+  bool lastReading;
+  bool fired;
+  unsigned long pressTime;
+};
+
+ButtonState buttons[] = {
+  { PIN_LEFT,  KEY_LEFT_ARROW,  HIGH, false, 0 },
+  { PIN_RIGHT, KEY_RIGHT_ARROW, HIGH, false, 0 },
+  { PIN_DOWN,  KEY_DOWN_ARROW,  HIGH, false, 0 },
+  { PIN_UP,    KEY_UP_ARROW,    HIGH, false, 0 },
+  { PIN_ENTER, ' ',  HIGH, false, 0 }
+};
+
+const int NUM_BUTTONS = sizeof(buttons) / sizeof(buttons[0]);
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println("Starting WOV Keyboard...");
+
+  for (int i = 0; i < NUM_BUTTONS; i++) {
+    pinMode(buttons[i].pin, INPUT_PULLUP);
+  }
+
+  bleKeyboard.begin();
+  Serial.println("BLE Keyboard ready — pair now");
+}
+
+void loop() {
+  if (!bleKeyboard.isConnected()) return;
+
+  unsigned long now = millis();
+
+  for (int i = 0; i < NUM_BUTTONS; i++) {
+    ButtonState &b = buttons[i];
+    bool reading = digitalRead(b.pin);
+
+    if (b.lastReading == HIGH && reading == LOW) {
+      b.pressTime = now;
+      b.fired = false;
+    }
+
+    if (reading == LOW && !b.fired && (now - b.pressTime >= PRESS_THRESHOLD_MS)) {
+      bleKeyboard.write(b.key);
+      b.fired = true;
+    }
+
+    if (b.lastReading == LOW && reading == HIGH) {
+      b.fired = false;
+    }
+
+    b.lastReading = reading;
+  }
+}
