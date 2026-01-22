@@ -1,16 +1,22 @@
 #include <WiFi.h>
 #include <esp_now.h>
 
-// ===== HUB MAC ===== //CHANGE THIS MAC ADDRESS TO MATCH THE ADDRESS FROM THE HUB ARDUINO
-uint8_t HUB_MAC[] = { 0x6C, 0xC8, 0x40, 0x8C, 0xD9, 0xD0 };
+// ===== HUB MAC (Dirección MAC del dispositivo principal) ===== 
+//CHANGE THIS MAC ADDRESS TO MATCH THE ADDRESS FROM THE HUB ARDUINO
+//CAMBIE ESTA DIRECCIÓN MAC PARA QUE COINCIDA CON LA DIRECCIÓN DEL HUB ARDUINO
+uint8_t HUB_MAC[] = { 0x6C, 0xC8, 0x40, 0x8C, 0xBB, 0x60 };
 
-// ===== BUTTON PINS ===== //CHANGE THESE PIN NUMBERS TO MATCH THE WIRING IN YOUR DEVICE
+// ===== BUTTON PINS (PINES DE BOTÓN) ===== 
+//CHANGE THESE PIN NUMBERS TO MATCH THE WIRING IN YOUR DEVICE. We recommend pins 4,5,18,19,21.
+//CAMBIE ESTOS NÚMEROS DE PIN PARA QUE COINCIDAN CON EL CABLEADO DE SU DISPOSITIVO. Recomendamos los pines 4,5,18,19,21. 
 #define PIN_UP     4
-#define PIN_DOWN   5
-#define PIN_LEFT   6
-#define PIN_RIGHT  7
+#define PIN_DOWN   18
+#define PIN_LEFT   5
+#define PIN_RIGHT  19
 
-// ===== KEY IDS =====
+//DO NOT CHANGE any code below these lines
+// NO CAMBIE ningún código debajo de estas líneas
+// ===== KEY IDS ===== 
 #define KEY_UP     1
 #define KEY_DOWN   2
 #define KEY_LEFT   3
@@ -33,9 +39,9 @@ struct Button {
 };
 
 Button buttons[] = {
-  { PIN_UP,    KEY_UP,    HIGH, 0 },
+  { PIN_UP,    KEY_UP,    HIGH, 0},
   { PIN_DOWN,  KEY_DOWN,  HIGH, 0 },
-  { PIN_LEFT,  KEY_LEFT,  HIGH, 0 },
+  { PIN_LEFT,  KEY_LEFT,  HIGH, 0},
   { PIN_RIGHT, KEY_RIGHT, HIGH, 0 }
 };
 
@@ -64,7 +70,6 @@ void setup() {
   peer.channel = 0;
   peer.encrypt = false;
 
-  // ESP32 core 3.x is stricter about duplicate peers
   esp_now_del_peer(HUB_MAC);
   delay(10);
 
@@ -76,7 +81,7 @@ void setup() {
 void loop() {
   unsigned long now = millis();
 
-  for (int i = 0; i < NUM_BUTTONS; i++) {
+  for (int i = 0; i< NUM_BUTTONS; i++) {
     bool current = digitalRead(buttons[i].pin);
 
     if (buttons[i].lastState == HIGH &&
@@ -94,9 +99,9 @@ void loop() {
       Serial.print("Sent key: ");
       Serial.println(buttons[i].key);
 
-      buttons[i].lastTime = now;
+      buttons[i].lastTime =now;
     }
 
-    buttons[i].lastState = current;
+    buttons[i].lastState =current;
   }
 }
